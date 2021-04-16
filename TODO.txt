@@ -5,8 +5,6 @@ X offer delete roster button
 
 TODO
 
-
-
 / manual manipulation of student rosters
     --offer a form, for student_name, ID number, dropdown of class_names, (store session id), and session username
 
