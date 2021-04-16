@@ -1,19 +1,17 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
+{% block title %}
 
-<html lang="en">
+  Take Attendance
 
-    <head>
-        <title>Attendance Helper!</title>
+{% endblock %}
 
-    </head>
+{% block main %}
 
-    <body>
         <h3> Upload your meeting attendance</h3>
         <form action = "http://localhost:5000/uploader" method = "POST" 
          enctype = "multipart/form-data">
          <input type = "file" name = "file" />
          <input type = "submit"/>
-      </form>   
+        </form>   
 
-    </body>
-</html>
+{% endblock %}

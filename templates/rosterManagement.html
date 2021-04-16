@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Roster Management
+{% endblock %}
+
+{% block main %}
+
+<form action = "/addRoster" method = "GET" >
+    <div class = "form-group">
+        <button class = "btn btn-primary"> Upload Powerschool Roster</button>
+    </div>
+</form>
+
+<form action = "/deleteRoster" method = "GET">
+    
+
+</form>
+
+<!-- Display the rosters here with a for loop-->
+{% for class_name in list_of_class_names %}
+
+<table id = "blueTable">
+    <!-- TITLE OF THE TABBLE SHOULD BE value in class_list-->
+    <tr > 
+        <th colspan = "2"> {{ class_name }} </th> 
+    </tr>
+
+    <tr>
+        <th> Student Name</th>
+        <th> Student ID </th>
+    </tr>
+{% for i in range(class_size[class_name]) %}
+    <tr>
+        <td> {{ total_roster[class_name][i]['student_name'] }} </td>
+        
+        <td> {{ total_roster[class_name][i]['student_id'] }}</td>     
+    </tr>
+
+{% endfor %}
+</table>
+<hr class = "dotted">
+{% endfor %}
+
+{% endblock %}

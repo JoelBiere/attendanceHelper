@@ -1,0 +1,28 @@
+X lock down login and register process
+
+2. Questions to answer:
+    where do I include the uploading procedure?
+        - all I need from the roster files is the dict
+        -perhaps there is a way to have users create new variable, upload the roster file, 
+          then a dict is created in python, BONUS: display the current roster to the user in a html table
+
+          How are the rosters stored? cookies? databases? how would that db be structured?
+
+    design the take attendance page
+
+
+
+Design thoughts
+
+1. in roster management I need a SQL TABLE that a user can interact with
+
+--offer a quick upload from the xlsx file
+
+--this will change how the program runs
+    ---specifically 
+        in helpers.py 
+            powerschoolDataparser()
+                --this should still be offered--but as a quick upload and should still return a dict--but store that dict in the sql table appropirately
+        in app.py
+            takeAttendance()
+                --adapt to the changes from powerschoolDataparser

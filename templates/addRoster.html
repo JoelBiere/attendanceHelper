@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Roster Management
+{% endblock %}
+
+{% block main %}
+<h3> Upload your Roster</h3>
+
+<form action = "/rosterManagement" method = "POST" enctype = "multipart/form-data" >
+    
+    <div>
+         <input type = text  autocomplete="off" autofocus class = "form-control" name = "className" placeholder = "Name of this Class">
+    </div>
+    <div>
+         <input type = "file" name = "rosterFile" />
+         <input type = "submit"/>
+    </div>
+</form>
+
+{% endblock %}

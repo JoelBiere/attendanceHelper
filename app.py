@@ -1,16 +1,33 @@
 import os
-import csv
 import openpyxl
-import re
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for, send_from_directory
 from werkzeug.utils import secure_filename
+from helpers import apology, login_required, Convert, meeting_data_parser, powerschool_data_parser
+from cs50 import SQL
+from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
+from werkzeug.security import check_password_hash, generate_password_hash 
+from tempfile import mkdtemp
+from flask_session import Session
+
+
+
+
 UPLOAD_FOLDER = "C:/Users/joelb/OneDrive/Documents/GitHub/attendanceHelper/static"
 ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
 
 app = Flask(__name__)
 
+#designate upload foler for roster files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Configure session to use filesystem (instead of signed cookies)
+app.config["SESSION_FILE_DIR"] = mkdtemp()
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
+db = SQL("sqlite:///attendanceHelper.db")
 
 
 def allowed_file(filename):
@@ -18,13 +35,16 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route('/', methods = ['GET'])
-def upload_file():
+@login_required
+def home_page():
     if request.method == "GET":
 
-        return render_template('uploadMeeting.html')
+        name = session.get('username')
+        return render_template('index.html', name = name)
 
 @app.route('/uploader', methods = ["POST"])
-def uploading_file():
+@login_required
+def uploading_meeting_file():
         if request.method == 'POST':
         #check if the post request has the file part
             if 'file' not in request.files:
@@ -41,7 +61,10 @@ def uploading_file():
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                return redirect(url_for('uploaded_file', filename = filename))
+
+                session['meetingFile'] = filename
+
+                return redirect("/attendanceDisplay")
 
 
 @app.route('/uploads/<filename>')
@@ -50,72 +73,211 @@ def uploaded_file(filename):
 
 
 
-#Converts a list to dictionary
-def Convert(lst):
-    res_dct = {lst[i]: lst[i + 1] for i in range(0, len(lst), 2)}
-    return res_dct
+#LOGIN
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Log user in"""
 
-def meeting_data_parser(meeting_file, start_line):
+    # Forget any user_id
+    session.clear()
 
-    #meeting attendance
-    meeting_data = []
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
 
-    with open(meeting_file , newline = '', encoding = 'utf-16') as meeting_attendance:
-        if int(start_line) == 6:
-            for i in range(int(start_line)):
-                next(meeting_attendance)
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return apology("must provide username", 403)
 
-        reader = csv.DictReader(meeting_attendance, delimiter = '\t')
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return apology("must provide password", 403)
 
-        for row in reader:
-            meeting_data.append(row)
+        # Query database for username
+        rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
 
-    meeting_names_and_numbers = []
-    for i in range(len(meeting_data)):
-        meeting_names_and_numbers.append(meeting_data[i]['Full Name'])
+        # Ensure username exists and password is correct
+        if len(rows) != 1 or not check_password_hash(rows[0]["hash"], request.form.get("password")):
+            return apology("invalid username and/or password", 403)
 
-    #covert names list into a big string to perferm regex on
-    names_numbers_conglomerate = "\n".join(meeting_names_and_numbers)
+        # Remember which user has logged in
+        session["user_id"] = rows[0]["id"]
+        session["username"] = request.form.get("username")
 
-    studentID_in_meeting = re.findall(r'[1-9]\w+', names_numbers_conglomerate)
+        # Redirect user to home page
+        return redirect("/")
 
-    return studentID_in_meeting
-
-
-def powerschool_data_parser(roster_file):
-    #Powerschool Roster
-    workbook = openpyxl.load_workbook(roster_file)
-
-    worksheet = workbook["Student Roster Report"]
-
-    #load names and numbers into list
-    pschool = []
-    for row in worksheet.values:
-
-        for value in row:
-            if value != '':
-                pschool.append(value)
-
-    #convert list into dictionary
-    pschool_dict = Convert(pschool)
-
-    return pschool_dict
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html")
 
 
-@app.route("/attendanceDisplay")
-#COMPARE THE 2 ATTENDANCE DATA SETS
-def main():
+# REGISTER
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    """Register user"""
+
+    if request.method== "POST":
+        username = request.form.get('username')
+
+        password = request.form.get('password')
+
+        confirmation = request.form.get('confirmation')
+
+        username_query = db.execute("SELECT * FROM users")
+
+        print(username_query)
+
+        username_list = []
+
+        for i in range(len(username_query)):
+            username_list.append(username_query[i]["username"])
+
+        print(username_list)
+
+        if not request.form.get('username'):
+            return apology("Must provide username")
+
+        if username in username_list:
+            return apology("Username already taken")
+
+        if not request.form.get('password') or not request.form.get('confirmation'):
+            return apology("Password field cannot be blank")
+
+        if password != confirmation:
+            return apology("Passwords do not match")
+
+        db.execute("INSERT INTO users (username, hash) VALUES (?,?)", username, generate_password_hash(password))
+
+        return redirect("/login")
 
     if request.method == "GET":
 
-        meeting_attendance_file = input("what is the file name of the meeting attendance: ")
+        return render_template('register.html')
 
-        powerschool_roster_file = input("what is the file name of the powerschool roster report: ")
+#LOGOUT
+@app.route("/logout")
+def logout():
+    """Log user out"""
+
+    # Forget any user_id
+    session.clear()
+
+    # Redirect user to login form
+    return redirect("/")
+
+@app.route("/uploadMeeting")
+@login_required
+
+#display file uploader
+def meetingUploader():
+    if request.method == "GET":
+        return render_template("uploadMeeting.html")
+
+
+
+
+@app.route("/rosterManagement", methods = ["GET", "POST"])
+@login_required
+def rosterManagement():
+
+    if request.method == "GET":
+        
+        # TODO detect current rosters in database and display them
+
+        teacher_id = session.get("user_id")
+
+        class_list = db.execute(" SELECT DISTINCT class_name FROM rosters WHERE teacher_id = ?", teacher_id)
+        # [{'class_name':'Period 8'}, {'class_name':'Period 7}, {} , {}]   ----DB.EXECUTE RETURNS A LIST OF DICTIONARIES WHERE THE KEY IS THE FIELD AND VALUE IS VALUE
+        
+        #convert list of dicts into list of all the values
+       
+        list_of_class_names = []
+        for i in range(len(class_list)):
+            list_of_class_names.append(class_list[i]['class_name'])
+            
+        print(list_of_class_names)
+        #['Period 8', 'Period 7']
+       
+        # what I want
+        # list of dicts where each dict is the entire roster of one of the classes in class_list
+        total_roster = {}
+        class_size = {}
+        for class_name in list_of_class_names:
+            total_roster[class_name] = db.execute(" SELECT DISTINCT student_name, student_id FROM rosters WHERE teacher_id = ? AND class_name = ? ", teacher_id, class_name)
+            print(f"{class_name} has {len(total_roster[class_name])} students ")
+            class_size[class_name] = len(total_roster[class_name])
+        return render_template("rosterManagement.html", list_of_class_names = list_of_class_names, total_roster = total_roster, class_size = class_size)
+
+    if request.method == "POST":
+        #should get passed the roster file
+        #check if the post request has the file part
+        if 'rosterFile' not in request.files:
+            flash('No File part')
+            return "File not in request.files" #redirect(request.url)
+
+        file = request.files['rosterFile']
+
+        #if user does not select file, browser also submit an empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            print(filename)
+            # TODO add file data to SQL data base
+            path = ("C:/Users/joelb/OneDrive/Documents/GitHub/attendanceHelper/static/%s" % filename)
+            workbook = openpyxl.load_workbook(path)
+            worksheet = workbook ["Student Roster Report"]
+
+            #load names and numbers into a dict
+            pschool = []
+            for row in worksheet.values:
+                for value in row:
+                    if value != '':
+                        pschool.append(value)
+            #first 2 elements are ["name", "Id"] so remove those
+            pschool.pop(0)
+            pschool.pop(0)
+
+            pschool_dict = Convert(pschool)
+            print(pschool)
+            print(pschool_dict)
+            #seed this into the database
+            class_name = request.form.get("className")
+            for key in pschool_dict:
+                db.execute("INSERT INTO rosters (teacher_id, teacher_username, class_name, student_name, student_id) VALUES (?, ?, ?, ?, ?)", session.get("user_id"), session.get("username"), class_name, key, pschool_dict[key] )
+                print(F" teacher_id -->{session.get('user_id')} teacher_username--> {session.get('username')} class_name ---> {class_name} student_name --> {key} student_id-->{pschool_dict[key]} ")
+            
+            message = "Roster Added Successfully!"
+            flash(message)
+            return redirect("/rosterManagement")
+
+@app.route("/addRoster")
+@login_required
+def addRoster():
+    if request.method =="GET":
+        return render_template("addRoster.html")
+
+
+
+@app.route("/attendanceDisplay")
+@login_required
+#COMPARE THE 2 ATTENDANCE DATA SETS
+def takeAttendance():
+
+    if request.method == "GET":
+
+        meeting_attendance_file = session.get('meetingFile')
+
+        powerschool_roster_file = 'studentRosterReport (2).xlsx' #this is hardcoded for right now
 
         while True:
-            start_line = input("In the meeting attendance file, which row includes the header (FULL NAME) line 1 or 6?: ")
+            start_line = 1 # this is hard coded for right now
 
-            if start_line == '1' or start_line == '6':
+            if start_line == 1 or start_line == 6:
                 break
 
         #this is a list of student ID's who attended the meeting
