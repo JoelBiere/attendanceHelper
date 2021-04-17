@@ -1,1 +1,1 @@
-web:gunicorn attendance-helper:app
+web: gunicorn attendance-helper:app
