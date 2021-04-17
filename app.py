@@ -14,8 +14,8 @@ from flask_session import Session
 
 
 
-
-UPLOAD_FOLDER = "C:/Users/joelb/OneDrive/Documents/GitHub/attendanceHelper/static"
+#this path is the folder for the HEROKU server
+UPLOAD_FOLDER = "/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin"
 ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
 
 app = Flask(__name__)
@@ -230,7 +230,7 @@ def rosterManagement():
 
             print(filename)
             # TODO add file data to SQL data base
-            path = ("C:/Users/joelb/OneDrive/Documents/GitHub/attendanceHelper/static/%s" % filename)
+            path = ("/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin%s" % filename)
             workbook = openpyxl.load_workbook(path)
             worksheet = workbook ["Student Roster Report"]
 

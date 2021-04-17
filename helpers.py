@@ -46,7 +46,7 @@ def meeting_data_parser(meeting_file, start_line):
 
     #meeting attendance
     meeting_data = []
-    path = "C:/Users/joelb/OneDrive/Documents/GitHub/attendanceHelper/static/%s" % meeting_file
+    path = "/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin%s" % meeting_file
     with open( path , newline = '', encoding = 'utf-16') as meeting_attendance:
         if int(start_line) == 6:
             for i in range(int(start_line)):
