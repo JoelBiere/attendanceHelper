@@ -44,7 +44,6 @@ def home_page():
         return render_template('index.html', name = name)
 
 @app.route('/takeAttendance', methods = ["POST"])
-@login_required
 def takeAttendance():
         if request.method == 'POST':
         #check if the post request has the file part
@@ -136,8 +135,6 @@ def takeAttendance():
 
 
 @app.route("/uploadMeeting")
-@login_required
-
 #display file uploader
 def meetingUploader():
     if request.method == "GET":
@@ -240,7 +237,6 @@ def logout():
 
 
 @app.route("/rosterManagement", methods = ["GET", "POST"])
-@login_required
 def rosterManagement():
 
     if request.method == "GET":
@@ -308,13 +304,11 @@ def rosterManagement():
             return redirect("/rosterManagement")
 
 @app.route("/addRoster")
-@login_required
 def addRoster():
     if request.method =="GET":
         return render_template("addRoster.html")
 
 @app.route("/deleteRoster", methods = ["POST"])
-@login_required
 def deleteRoster():
 
     if request.method == "POST":
