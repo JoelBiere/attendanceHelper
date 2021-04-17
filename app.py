@@ -1,6 +1,7 @@
 import os
 import openpyxl
 import gunicorn
+import redis
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for, send_from_directory
 from werkzeug.utils import secure_filename
@@ -11,7 +12,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from tempfile import mkdtemp
 from flask_session import Session
 
-UPLOAD_FOLDER = "/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin"
+redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
+
+
+UPLOAD_FOLDER = "/app/static"
 ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
 
 app = Flask(__name__)
@@ -272,7 +276,7 @@ def rosterManagement():
 
             print(filename)
             # TODO add file data to SQL data base
-            path = ("/app/.heroku/python/bin:/usr/local/bin:/usr/bin:/bin/%s" % filename)
+            path = ("/app/static/%s" % filename)
             workbook = openpyxl.load_workbook(path)
             
             for sheet in workbook:
