@@ -6,33 +6,18 @@
 {% endblock %}
 
 {% block main %}
-<div style = "float:left;" style = "width:50">
-            <table id = "redTable" style = "width:100"  name = "absentTable">
-            <caption> {{ class_name }} </caption>
+
+            <table id = "stockTable" style = "width:100" class = "center">
             <tr>
-                <th> Absent Total: {{ num_of_absents }}</th>    
+                <th>Absent Student</th>
             </tr>
 
             {% for i in range(num_of_absents) %}
             <tr>
                 <td> {{ students_absent[i] }} </td>
             </tr>
-            {% endfor %}     
+            
+            {% endfor %}
+            
             </table>
-</div>         
- 
-<div style = "float:right;" style = "width:50"> 
-<table id = "blueTable" style = "width:100"  name = "presentTable">
-              <caption> {{ class_name }}</caption>
-              <tr>
-                  <th > Present  Total: {{ num_of_students_present }}</th>
-              </tr>
-  
-              {% for i in range(num_of_students_present) %}
-              <tr>
-                  <td> {{ student_names_present[i] }} </td>
-              </tr>
-              {% endfor %}     
-              </table>
-</div>
 {% endblock %}

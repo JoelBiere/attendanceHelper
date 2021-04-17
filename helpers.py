@@ -7,15 +7,16 @@ import re
 
 from flask import redirect, render_template, request, session
 from functools import wraps
-from cs50 import SQL
-
-db = SQL("sqlite:///attendanceHelper.db")
 
 
 def apology(message, code=400):
     """Render message as an apology to user."""
     def escape(s):
+        """
+        Escape special characters.
 
+        https://github.com/jacebrowning/memegen#special-characters
+        """
         for old, new in [("-", "--"), (" ", "-"), ("_", "__"), ("?", "~q"),
                          ("%", "~p"), ("#", "~h"), ("/", "~s"), ("\"", "''")]:
             s = s.replace(old, new)
@@ -24,6 +25,11 @@ def apology(message, code=400):
 
 
 def login_required(f):
+    """
+    Decorate routes to require login.
+
+    https://flask.palletsprojects.com/en/1.1.x/patterns/viewdecorators/
+    """
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session.get("user_id") is None:
@@ -81,34 +87,3 @@ def powerschool_data_parser(roster_file):
     pschool_dict = Convert(pschool)
 
     return pschool_dict
-
-def get_current_roster():
-    teacher_id = session.get("user_id")
-
-    class_list = db.execute(" SELECT DISTINCT class_name FROM rosters WHERE teacher_id = ?", teacher_id)
-    # [{'class_name':'Period 8'}, {'class_name':'Period 7}, {} , {}]   ----DB.EXECUTE RETURNS A LIST OF DICTIONARIES WHERE THE KEY IS THE FIELD AND VALUE IS VALUE
-    
-    #convert list of dicts into list of all the values
-    
-    list_of_class_names = []
-    for i in range(len(class_list)):
-        list_of_class_names.append(class_list[i]['class_name'])
-        
-    print(list_of_class_names)
-    #['Period 8', 'Period 7']
-    
-    # what I want
-    # list of dicts where each dict is the entire roster of one of the classes in class_list
-    total_roster = {}
-    class_size = {}
-    for class_name in list_of_class_names:
-        total_roster[class_name] = db.execute(" SELECT DISTINCT student_name, student_id FROM rosters WHERE teacher_id = ? AND class_name = ? ", teacher_id, class_name)
-        print(f"{class_name} has {len(total_roster[class_name])} students ")
-        class_size[class_name] = len(total_roster[class_name])
-
-    #create global variables to the session
-    session['total_roster'] = total_roster
-    session['list_of_class_names'] = list_of_class_names
-    session['class_size'] = class_size
-    
-    return total_roster

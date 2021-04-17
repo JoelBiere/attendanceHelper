@@ -46,31 +46,6 @@
             }
         </style>
 
-        <style>
-            #redTable {
-            font-family: Arial, Helvetica, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-            }
-
-            #redTable td, #stockTable th {
-            border: 1px solid #ddd;
-            padding: 8px;
-            }
-
-            #redTable tr:nth-child(even){background-color: #f2f2f2;}
-
-            #redTable tr:hover {background-color: #ddd;}
-
-            #redTable th {
-            padding-top: 12px;
-            padding-bottom: 12px;
-            text-align: left;
-            background-color: #e43c09;
-            color: white;
-            }
-        </style>
-
     </head>
 
     <body>
@@ -84,7 +59,8 @@
                 {% if session.user_id %}
                     <ul class="navbar-nav mr-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/rosterManagement">Roster Management</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/uploadMeeting">Take Attendance</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/uploadMeeting">Check Attendance</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/history">History</a></li>
                     </ul>
                     <ul class="navbar-nav ml-auto mt-2">
                         <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
