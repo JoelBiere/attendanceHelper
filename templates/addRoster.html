@@ -5,25 +5,17 @@
 {% endblock %}
 
 {% block main %}
-<h3> Upload your PowerSchool Roster</h3>
+<h3> Upload your Roster</h3>
 
 <form action = "/rosterManagement" method = "POST" enctype = "multipart/form-data" >
     
     <div>
-         <input required = "required" type = text  autocomplete="off" autofocus class = "form-control" name = "className" placeholder = "Name of this Class">
+         <input type = text  autocomplete="off" autofocus class = "form-control" name = "className" placeholder = "Name of this Class">
     </div>
     <div>
-         <input required = "required" type = "file" name = "rosterFile" />
+         <input type = "file" name = "rosterFile" />
          <input type = "submit"/>
     </div>
 </form>
 
-<hr style = "padding:0 7em 2em 0">
-<div style = "text-align:left; float:left; width:50"> 
-    <h5> Uploaded Roster Files Must Look Like This</h5>
-    <p> The excel sheet must have the Student Name as its left most column and the student id number to its right.</p>
-    <p> Don't know how to do this? <a href="https://docs.google.com/document/d/17LE05jQT0Z_Jb_0nztkMhcizzpRYUnvaROstm6i_BYE/edit?usp=sharing" target ="_blank">Click here for help on uploading your PowerSchool roster</a> </p>
-    <img src = "static\model.jpg"  alt = "model upload">
-
-</div>
 {% endblock %}
