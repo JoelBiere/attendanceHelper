@@ -250,9 +250,12 @@ def rosterManagement():
         
         # TODO detect current rosters in database and display them
 <<<<<<< HEAD
+<<<<<<< HEAD
 
         teacher_id = session.get("user_id")
 =======
+=======
+>>>>>>> parent of 2a1731f (Design Improvements & Bug fixes)
         total_roster = get_current_roster()
         list_of_class_names = session.get('list_of_class_names')
         class_size = session.get('class_size')
