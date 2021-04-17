@@ -69,14 +69,11 @@ def takeAttendance():
                 #this is a list of student ID's who attended the meeting
                 studentID_in_meeting = meeting_data_parser(filename,start_line)
 
-                print(studentID_in_meeting)
-
-######THIS IS WHERE I LEFT OFF------CHANGE THIS FUNCTION SO IT DOESN"T RELY ON PULLING FROM ROSTER FILE---BUT INSTEAD FROM THE DICT in SESSION
-                #this is a dict. Keys are student names, values are student ID's
+                
                 total_roster = session.get('total_roster')
                 class_name = request.form.get('class_name')
 
-                #{'Period 7': [{'student_name': 'Alexander, Joyce', 'student_id': '229391'}, {'student_name': 'Austin, Leroy', 'student_id': '225913'}, {'student_name': 'Bankston, Latayvon', 'student_id': '235369'},
+                # CURRENT FORMAT {'Period 7': [{'student_name': 'Alexander, Joyce', 'student_id': '229391'}, {'student_name': 'Austin, Leroy', 'student_id': '225913'}, {'student_name': 'Bankston, Latayvon', 'student_id': '235369'},
                 class_roster = total_roster[class_name]
 
                 student_names = []
@@ -86,20 +83,15 @@ def takeAttendance():
                     student_names.append(item['student_name'])
                     student_numbers.append(item['student_id'])
 
+                #this is a dict. Keys are student names, values are student ID's
                 student_roster = {}
                 for i in range(len(student_names)):
                     student_roster[student_names[i]] = student_numbers[i]
-
-                print(student_roster)
-
 
                 # compare the 2 sets of data to produce a list of names present and a list of names absent
                 student_numbers_present = []
                 student_names_present = []
             
-
-
-##### GET STUDENT_ROSTER TO BE A DICT WHERE KEY IS STUDENT NAMES AND VALUES ARE STUDENT NUMBERS
                 for key in student_roster:
 
                     for j in range(len(studentID_in_meeting)):
@@ -254,6 +246,10 @@ def rosterManagement():
         
         # TODO detect current rosters in database and display them
         total_roster = get_current_roster()
+        
+        if total_roster == {}:
+            flash("You don't have any rosters yet! Get started by uploading your Powerschool Roster as an excel sheet")
+
         list_of_class_names = session.get('list_of_class_names')
         class_size = session.get('class_size')
 
@@ -281,7 +277,11 @@ def rosterManagement():
             # TODO add file data to SQL data base
             path = ("C:/Users/joelb/OneDrive/Documents/GitHub/attendanceHelper/static/%s" % filename)
             workbook = openpyxl.load_workbook(path)
-            worksheet = workbook ["Student Roster Report"]
+            
+            for sheet in workbook:
+                sheet_title = sheet.title
+            print(sheet_title)
+            worksheet = workbook [sheet_title]
 
             #load names and numbers into a dict
             pschool = []

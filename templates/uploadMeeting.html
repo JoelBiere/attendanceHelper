@@ -9,10 +9,10 @@
 
         <h3> Upload your meeting attendance</h3>
         <form action = "/takeAttendance" method = "POST" enctype = "multipart/form-data">
-         <input type = "file" name = "meetingFile" />
+         <input required = "required" type = "file" name = "meetingFile" />
          
-         <label for="class_select"> Which Roster?</label>
-         <select id="class_select" name="class_name">
+         <label for="class_select" > Take attendance for which class?</label>
+         <select id="class_select" name="class_name" required = "required">
              <option disabled selected value = ""> Choose a roster</option>
              {% for class_name in list_of_class_names %}
              
@@ -22,5 +22,11 @@
 
          <input type = "submit"/>
         </form>   
+<hr style = "padding:0 7em 2em 0">
+<div style = "text-align:left; float:left; width:50;">
+  <h6> Uploading Meeting Files</h6>
+  <p> Upload your TEAMS meeting files and select which of your rosters to corroborate with.</p>
+  <p> <a href="https://docs.google.com/document/d/1Cb7_6SF3EYKERqWZ92IqLaRCgmlU6mcx5ltWLeP-2G8/edit?usp=sharing" target ="_blank">Click here for help downloading TEAMS meeting .csv files</a></p>
 
+</div>
 {% endblock %}
