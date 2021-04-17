@@ -8,11 +8,6 @@
 {% block main %}
 
         <h3> Upload your meeting attendance</h3>
-<<<<<<< HEAD
-        <form action = "http://localhost:5000/uploader" method = "POST" 
-         enctype = "multipart/form-data">
-         <input type = "file" name = "file" />
-=======
         <form action = "/takeAttendance" method = "POST" enctype = "multipart/form-data">
          <input type = "file" name = "meetingFile" />
          
@@ -25,7 +20,6 @@
              {% endfor %}
          </select>
 
->>>>>>> parent of 2a1731f (Design Improvements & Bug fixes)
          <input type = "submit"/>
         </form>   
 

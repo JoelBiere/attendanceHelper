@@ -66,71 +66,7 @@ def uploading_meeting_file():
 
                 session['meetingFile'] = filename
 
-<<<<<<< HEAD
                 return redirect("/attendanceDisplay")
-=======
-                start_line = 1 # this is hard coded for right now
-
-                #this is a list of student ID's who attended the meeting
-                studentID_in_meeting = meeting_data_parser(filename,start_line)
-
-                print(studentID_in_meeting)
-
-######THIS IS WHERE I LEFT OFF------CHANGE THIS FUNCTION SO IT DOESN"T RELY ON PULLING FROM ROSTER FILE---BUT INSTEAD FROM THE DICT in SESSION
-                #this is a dict. Keys are student names, values are student ID's
-                total_roster = session.get('total_roster')
-                class_name = request.form.get('class_name')
-
-                #{'Period 7': [{'student_name': 'Alexander, Joyce', 'student_id': '229391'}, {'student_name': 'Austin, Leroy', 'student_id': '225913'}, {'student_name': 'Bankston, Latayvon', 'student_id': '235369'},
-                class_roster = total_roster[class_name]
-
-                student_names = []
-                student_numbers = []
-            
-                for item in class_roster:
-                    student_names.append(item['student_name'])
-                    student_numbers.append(item['student_id'])
-
-                student_roster = {}
-                for i in range(len(student_names)):
-                    student_roster[student_names[i]] = student_numbers[i]
-
-                print(student_roster)
-
-
-                # compare the 2 sets of data to produce a list of names present and a list of names absent
-                student_numbers_present = []
-                student_names_present = []
-            
-
-
-##### GET STUDENT_ROSTER TO BE A DICT WHERE KEY IS STUDENT NAMES AND VALUES ARE STUDENT NUMBERS
-                for key in student_roster:
-
-                    for j in range(len(studentID_in_meeting)):
-
-                        #if the student number in the roster matches the student number in the meeting
-                        if student_roster[key] == studentID_in_meeting[j]:
-                            print(f"{student_roster[key]} matches {studentID_in_meeting[j]}")
-
-                            #this gets the key--which is the student name-- from the value -- which is the student number.
-                            student_names_present.append(list(student_roster.keys())[list(student_roster.values()).index(studentID_in_meeting[j])])
-
-                            student_numbers_present.append(student_roster[key])
-
-
-                print(f"Present student ID's --> {student_numbers_present}")
-                print(f"Present students --> {student_names_present}")
-
-                #get list of of names in roster
-                student_roster_names = student_roster.keys()
-
-                students_absent = list(set(student_roster_names) - set(student_names_present))
-                
-                students_absent.sort()
-                if "Name" in students_absent:
-                    students_absent.remove("Name")
->>>>>>> parent of 2a1731f (Design Improvements & Bug fixes)
 
 
 @app.route('/uploads/<filename>')
@@ -249,17 +185,13 @@ def rosterManagement():
     if request.method == "GET":
         
         # TODO detect current rosters in database and display them
-<<<<<<< HEAD
-<<<<<<< HEAD
 
         teacher_id = session.get("user_id")
-=======
-=======
->>>>>>> parent of 2a1731f (Design Improvements & Bug fixes)
+
         total_roster = get_current_roster()
         list_of_class_names = session.get('list_of_class_names')
         class_size = session.get('class_size')
->>>>>>> parent of 2a1731f (Design Improvements & Bug fixes)
+
 
         class_list = db.execute(" SELECT DISTINCT class_name FROM rosters WHERE teacher_id = ?", teacher_id)
         # [{'class_name':'Period 8'}, {'class_name':'Period 7}, {} , {}]   ----DB.EXECUTE RETURNS A LIST OF DICTIONARIES WHERE THE KEY IS THE FIELD AND VALUE IS VALUE
