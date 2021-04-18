@@ -275,6 +275,7 @@ def rosterManagement():
             flash('No selected file')
             return redirect(request.url)
 
+            
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -311,6 +312,10 @@ def rosterManagement():
             message = "Roster Added Successfully!"
             flash(message)
             return redirect("/rosterManagement")
+
+        else:
+            flash("Roster couldn't upload. Make sure you are uploading a .xlsx file and the format matches the model below")
+            return redirect("/addRoster")
 
 @app.route("/addRoster")
 def addRoster():

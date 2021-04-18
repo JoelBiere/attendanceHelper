@@ -41,7 +41,18 @@ def meeting_data_parser(meeting_file, start_line):
     #meeting attendance
     meeting_data = []
     path = "/app/static/%s" % meeting_file
+
+    #see if the start line should be 1 or 6 (CURRENTLY TEAMS HAS A DIFFERENT FORMAT IF DOWNLOADING MEETING ATTEDNANCE AFTER MEETING IS OVER. THE FIRST LINE OF A RETROACTIVELY DOWNLOADED MEETING ATTENDANCE is 'Meeting Summary' AND THE DATA DOES NOT START UNTIL LINE 6)
     with open( path , newline = '', encoding = 'utf-16') as meeting_attendance:
+        reader = csv.reader(meeting_attendance)
+        row1 = next(reader)
+
+    if row1[0] == 'Meeting Summary':
+        start_line = 6
+
+    with open( path , newline = '', encoding = 'utf-16') as meeting_attendance:
+        
+        
         if int(start_line) == 6:
             for i in range(int(start_line)):
                 next(meeting_attendance)
