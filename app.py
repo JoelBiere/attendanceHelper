@@ -24,7 +24,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-app.config["SECRET_KEY"] = '19d202da98d970470254bee85408d5760dc225eb0f998645'
+app.config["SECRET_KEY"] = os.urandom(12).hex()
 app.config["SESSION_TYPE"] = 'filesystem'
 # Configure session to use filesystem (instead of signed cookies)
 """
