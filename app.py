@@ -25,7 +25,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
 app.config["SECRET_KEY"] = '19d202da98d970470254bee85408d5760dc225eb0f998645'
-
+app.config["SESSION_TYPE"] = 'redis'
 # Configure session to use filesystem (instead of signed cookies)
 """
 app.config["SESSION_FILE_DIR"] = mkdtemp()
