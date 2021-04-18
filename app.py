@@ -16,7 +16,7 @@ redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 
 
 UPLOAD_FOLDER = "/app/static"
-ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
+ALLOWED_EXTENSIONS = {'xlsx', 'xlsm', 'xltx', 'xltm'}
 
 app = Flask(__name__)
 
@@ -273,7 +273,7 @@ def rosterManagement():
         #if user does not select file, browser also submit an empty part without filename
         if file.filename == '':
             flash('No selected file')
-            return redirect(request.url)
+            return redirect("/addRoster")
 
             
         if file and allowed_file(file.filename):
@@ -313,7 +313,7 @@ def rosterManagement():
             flash(message)
             return redirect("/rosterManagement")
 
-        else:
+        elif allowed_file(file.filename) == False:
             flash("Roster couldn't upload. Make sure you are uploading a .xlsx file and the format matches the model below")
             return redirect("/addRoster")
 
