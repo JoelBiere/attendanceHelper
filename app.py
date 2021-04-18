@@ -23,7 +23,7 @@ app = Flask(__name__)
 #designate upload foler for roster files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-SECRET_KEY = os.urandom(12)
+SECRET_KEY = os.urandom(12).hex()
 app.config["SECRET_KEY"] = SECRET_KEY
 
 if not SECRET_KEY:
