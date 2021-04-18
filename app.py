@@ -23,8 +23,11 @@ app = Flask(__name__)
 #designate upload foler for roster files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+SECRET_KEY = os.urandom(12)
+app.config["SECRET_KEY"] = SECRET_KEY
 
-app.config["SECRET_KEY"] = "b'(*/x05!/x04U/xbf5/xe1a/x84/xf1K/rS/xbc'"
+if not SECRET_KEY:
+    raise ValueError("No SECRET_KEY set for Flask application")
 
 # Configure session to use filesystem (instead of signed cookies)
 """
