@@ -16,7 +16,8 @@ redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 
 
 UPLOAD_FOLDER = "/app/static"
-ALLOWED_EXTENSIONS = {'xlsx', 'xlsm', 'xltx', 'xltm'}
+ROSTER_ALLOWED_EXTENSIONS = {'xlsx', 'xlsm', 'xltx', 'xltm', }
+MEETING_ALLOWED_EXTENSIONS = {'csv'}
 
 app = Flask(__name__)
 
@@ -37,9 +38,13 @@ Session(app)
 db = SQL("sqlite:///attendanceHelper.db")
 
 
-def allowed_file(filename):
+def roster_allowed_file(filename):
     return'.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        filename.rsplit('.', 1)[1].lower() in ROSTER_ALLOWED_EXTENSIONS
+
+def meeting_allowed_file(filename):
+    return'.' in filename and \
+        filename.rsplit('.', 1)[1].lower() in MEETING_ALLOWED_EXTENSIONS
 
 @app.route('/', methods = ['GET'])
 @login_required
@@ -67,7 +72,7 @@ def takeAttendance():
                 flash('No selected file')
                 return redirect(request.url)
 
-            if file and allowed_file(file.filename):
+            if file and meeting_allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
@@ -276,7 +281,7 @@ def rosterManagement():
             return redirect("/addRoster")
 
             
-        if file and allowed_file(file.filename):
+        if file and roster_allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
 
@@ -313,7 +318,7 @@ def rosterManagement():
             flash(message)
             return redirect("/rosterManagement")
 
-        elif allowed_file(file.filename) == False:
+        elif roster_allowed_file(file.filename) == False:
             flash("Roster couldn't upload. Make sure you are uploading a .xlsx file and the format matches the model below")
             return redirect("/addRoster")
 
