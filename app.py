@@ -23,6 +23,9 @@ app = Flask(__name__)
 #designate upload foler for roster files
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
+app.config["SECRET_KEY"] = "b'(*/x05!/x04U/xbf5/xe1a/x84/xf1K/rS/xbc'"
+
 # Configure session to use filesystem (instead of signed cookies)
 """
 app.config["SESSION_FILE_DIR"] = mkdtemp()
