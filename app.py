@@ -13,12 +13,10 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from tempfile import mkdtemp
 from flask_session import Session
 
-DATABASE_URL = os.environ['DATABASE_URL']
-
-conn = psycopg2.connect(DATABASE_URL, sslmode ='require')
-
 redis_url = os.getenv('REDISTOGO_URL', 'redis://localhost:6379')
 
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = psycopg2.connect(DATABASE_URL, sslmode ='require')
 
 UPLOAD_FOLDER = "/app/static"
 ROSTER_ALLOWED_EXTENSIONS = {'xlsx', 'xlsm', 'xltx', 'xltm', }
