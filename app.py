@@ -4,6 +4,8 @@ import gunicorn
 import redis
 import psycopg2
 
+from flask_sqlalchemy import SQLAlchemy
+
 from flask import Flask, flash, redirect, render_template, request, session, url_for, send_from_directory
 from werkzeug.utils import secure_filename
 from helpers import apology, login_required, Convert, meeting_data_parser, powerschool_data_parser, get_current_roster
@@ -25,19 +27,16 @@ MEETING_ALLOWED_EXTENSIONS = {'csv'}
 app = Flask(__name__)
 
 #designate upload foler for roster files
+app.config["SQLALCHEMY_DATABASE_URI"] =  "postgresql://lsyfabwppvfdzo:eb483fb6facd4b9b649c0442125ae8c5cd8ecfaab9192088db0be9999920637f@ec2-3-217-219-146.compute-1.amazonaws.com:5432/d316h0cqhenohg"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 app.config["SECRET_KEY"] = os.urandom(12).hex()
 app.config["SESSION_TYPE"] = 'filesystem'
 # Configure session to use filesystem (instead of signed cookies)
-"""
-app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-"""
+
 Session(app)
 
-db = SQL("postgres://lsyfabwppvfdzo:eb483fb6facd4b9b649c0442125ae8c5cd8ecfaab9192088db0be9999920637f@ec2-3-217-219-146.compute-1.amazonaws.com:5432/d316h0cqhenohg")
+db = SQL("postgresql://lsyfabwppvfdzo:eb483fb6facd4b9b649c0442125ae8c5cd8ecfaab9192088db0be9999920637f@ec2-3-217-219-146.compute-1.amazonaws.com:5432/d316h0cqhenohg")
 
 
 def roster_allowed_file(filename):

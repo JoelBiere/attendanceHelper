@@ -9,7 +9,7 @@ from flask import redirect, render_template, request, session
 from functools import wraps
 from cs50 import SQL
 
-db = SQL("postgres://lsyfabwppvfdzo:eb483fb6facd4b9b649c0442125ae8c5cd8ecfaab9192088db0be9999920637f@ec2-3-217-219-146.compute-1.amazonaws.com:5432/d316h0cqhenohg")
+db = SQL("postgresql://lsyfabwppvfdzo:eb483fb6facd4b9b649c0442125ae8c5cd8ecfaab9192088db0be9999920637f@ec2-3-217-219-146.compute-1.amazonaws.com:5432/d316h0cqhenohg")
 
 
 def apology(message, code=400):
