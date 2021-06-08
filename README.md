@@ -62,6 +62,3 @@ displays the current rosters in the db and also offers user manipulation of that
 in the future, there should be options for users to manipulate the table based on individual student rather than only being limited to uploading whole excel files
 
 
---if a teacher downloads the meeting attendance after the meeting has conlcuded--the format of the .csv file changes
-        the data the program reads into memory would then start on line 6 of the csv--not line 1
-            -currently the start_line variable is hard coded to 1
